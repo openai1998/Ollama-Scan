@@ -11,10 +11,13 @@ from typing import List
 from ollama import Client
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
+import re
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
+from rich.markdown import Markdown
+from rich.style import Style
 
 
 class OllamaShell:
@@ -278,7 +281,27 @@ class OllamaShell:
                 for chunk in stream:
                     content = chunk["message"]["content"]
                     response += content
-                    self.console.print(content, end="", highlight=False)
+                
+                # 处理思考标签
+                think_pattern = r'<think>(.*?)</think>'
+                parts = re.split(think_pattern, response, flags=re.DOTALL)
+                
+                for i, part in enumerate(parts):
+                    if i % 2 == 1:  # 思考内容
+                        # 显示思考过程
+                        think_panel = Panel(
+                            Markdown(part.strip()),
+                            title="思考过程",
+                            style=Style(color="grey70", italic=True),
+                            border_style="grey50"
+                        )
+                        self.console.print(think_panel)
+                        self.console.print()  # 添加空行
+                    else:  # 普通内容
+                        if part.strip():
+                            # 使用 Markdown 渲染普通内容
+                            md = Markdown(part.strip())
+                            self.console.print(md)
 
             except KeyboardInterrupt:
                 self.console.print("\n[yellow]⛔️ 对话已取消[/yellow]")
