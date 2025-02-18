@@ -5,19 +5,19 @@
 """
 
 import argparse
+import re
 import sys
 from typing import List
 
 from ollama import Client
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
-import re
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.table import Table
-from rich.markdown import Markdown
 from rich.style import Style
+from rich.table import Table
 
 
 class OllamaShell:
@@ -82,14 +82,10 @@ class OllamaShell:
                     details = model.details
 
                     # 格式化大小
-                    size_str = (
-                        f"{size / (1024 * 1024 * 1024):.1f}GB" if size else "Unknown"
-                    )
+                    size_str = f"{size / (1024 * 1024 * 1024):.1f}GB" if size else "Unknown"
 
                     # 格式化时间
-                    modified_str = (
-                        modified.strftime("%Y-%m-%d %H:%M") if modified else "Unknown"
-                    )
+                    modified_str = modified.strftime("%Y-%m-%d %H:%M") if modified else "Unknown"
 
                     # 获取详细信息
                     format_str = details.format if details else "Unknown"
@@ -107,9 +103,7 @@ class OllamaShell:
                     )
 
                 except Exception as e:
-                    self.console.print(
-                        f"[yellow]⚠️ 警告: 处理模型信息时出错: {str(e)}[/yellow]"
-                    )
+                    self.console.print(f"[yellow]⚠️ 警告: 处理模型信息时出错: {str(e)}[/yellow]")
                     continue
 
             self.console.print(table)
@@ -127,9 +121,7 @@ class OllamaShell:
         self.console.print(f"\n[bold]📥 开始拉取模型: {model_name}[/bold]")
 
         try:
-            with Progress(
-                TextColumn("[bold blue]{task.description}"), transient=False
-            ) as progress:
+            with Progress(TextColumn("[bold blue]{task.description}"), transient=False) as progress:
                 task = progress.add_task("拉取中...", total=None)
                 for info in self.client.pull(model_name, stream=True):
                     if "status" in info:
@@ -224,11 +216,7 @@ class OllamaShell:
                 size_str = f"{size_gb:.1f}GB"
 
                 # 格式化过期时间
-                expires_str = (
-                    model.expires_at.strftime("%Y-%m-%d %H:%M:%S")
-                    if model.expires_at
-                    else "Unknown"
-                )
+                expires_str = model.expires_at.strftime("%Y-%m-%d %H:%M:%S") if model.expires_at else "Unknown"
 
                 table.add_row(
                     model.name,
@@ -281,20 +269,15 @@ class OllamaShell:
                 for chunk in stream:
                     content = chunk["message"]["content"]
                     response += content
-                
+
                 # 处理思考标签
-                think_pattern = r'<think>(.*?)</think>'
+                think_pattern = r"<think>(.*?)</think>"
                 parts = re.split(think_pattern, response, flags=re.DOTALL)
-                
+
                 for i, part in enumerate(parts):
                     if i % 2 == 1:  # 思考内容
                         # 显示思考过程
-                        think_panel = Panel(
-                            Markdown(part.strip()),
-                            title="思考过程",
-                            style=Style(color="grey70", italic=True),
-                            border_style="grey50"
-                        )
+                        think_panel = Panel(Markdown(part.strip()), title="思考过程", style=Style(color="grey70", italic=True), border_style="grey50")
                         self.console.print(think_panel)
                         self.console.print()  # 添加空行
                     else:  # 普通内容
@@ -315,9 +298,7 @@ class OllamaShell:
 
     def show_help(self, *args: List[str]) -> None:
         """显示帮助信息"""
-        table = Table(
-            title="✨ 命令列表", show_header=True, header_style="bold magenta"
-        )
+        table = Table(title="✨ 命令列表", show_header=True, header_style="bold magenta")
         table.add_column("📝 命令", style="cyan")
         table.add_column("📄 说明", style="green")
         table.add_column("📖 用法", style="yellow")
@@ -361,9 +342,7 @@ class OllamaShell:
         # 获取所有模型
         models = self.get_model_list()
         # 创建补全器
-        word_list = commands + [
-            f"{cmd} {model}" for cmd in ["chat", "show", "pull"] for model in models
-        ]
+        word_list = commands + [f"{cmd} {model}" for cmd in ["chat", "show", "pull"] for model in models]
         return WordCompleter(word_list, ignore_case=True)
 
     def run(self) -> None:
@@ -414,9 +393,7 @@ class OllamaShell:
 
 def main():
     # 创建命令行解析器
-    parser = argparse.ArgumentParser(
-        description="Ollama Shell - 一个功能强大的 Ollama 命令行工具"
-    )
+    parser = argparse.ArgumentParser(description="Ollama Shell - 一个功能强大的 Ollama 命令行工具")
     parser.add_argument(
         "-H",
         "--host",
