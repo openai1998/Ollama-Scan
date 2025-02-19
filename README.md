@@ -1,8 +1,8 @@
 # Ollama-Scan
 
-> 由于 Ollama 内部没有鉴权方式，我重构了一下代码，变成了命令行交互式的工具，提供自动补全。这是练手的工具，大家如果觉得好用可以多多 star，如果能冲到 100 个 star 那就更好了（
+> 由于 Ollama 内部没有鉴权方式，我重构了一下代码，变成了命令行交互式的工具，提供自动补全。这是练手的工具，大家如果觉得好用可以多多 star，~~如果能冲到 100 个 star 那就更好了（~~，已经 100 star 了，感谢佬友们支持，如果有觉得不好用的地方还请多多提 issue
 >
-> Ollama 服务器发现我一般会使用 https://hunter.qianxin.com 使用语法 `app.name=“Ollama Server”&&is_domain=“False”`
+> Ollama 服务器发现我一般会使用 https://hunter.qianxin.com 配合语法 `app.name=“Ollama Server”&&is_domain=“False”`
 
 一个基于 Ollama 的命令行工具，提供友好的交互式界面来管理和使用 Ollama 模型。
 
