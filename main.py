@@ -366,11 +366,11 @@ class OllamaShell:
 
         commands_help = [
             ("list", "📃 列出所有可用的模型", "list"),
-            ("pull", "📥 拉取指定的模型", "pull <model_name>"),
+            ("pull", "📥 拉取指定的模型", "pull <namespace/model_name>"),
             ("show", "🔍 显示模型详细信息", "show <model_name>"),
             ("chat", "💬 与模型进行对话", "chat <model_name>"),
             ("ps", "⚡️ 显示运行中的模型", "ps"),
-            ("rm", "🗑️  删除指定模型","rm <model_name>"),
+            ("rm", "🚮 删除指定模型", "rm <model_name>"),
             ("version", "📌 显示版本信息", "version"),
             ("help", "❓ 显示帮助信息", "help"),
             ("exit", "🚪 退出程序", "exit"),
