@@ -20,7 +20,7 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.style import Style
 from rich.table import Table
-from httpx import Timeout, HTTPError
+from httpx import Timeout, HTTPError, ReadTimeout
 
 
 class OllamaShell:
@@ -329,13 +329,11 @@ class OllamaShell:
 
                 for i, part in enumerate(parts):
                     if i % 2 == 1:  # 思考内容
-                        # 显示思考过程
                         think_panel = Panel(Markdown(part.strip()), title="思考过程", style=Style(color="grey70", italic=True), border_style="grey50")
                         self.console.print(think_panel)
                         self.console.print()  # 添加空行
                     else:  # 普通内容
                         if part.strip():
-                            # 使用 Markdown 渲染普通内容
                             md = Markdown(part.strip())
                             self.console.print(md)
 
@@ -348,14 +346,14 @@ class OllamaShell:
             except ConnectionError:
                 self.console.print("[red]连接服务器失败[/red]")
                 break
-            except TimeoutError:
-                self.console.print("[red]请求超时[/red]")
+            except (TimeoutError, ReadTimeout):
+                self.console.print("[red]请求超时，请检查网络连接或服务器状态[/red]")
                 break
             except HTTPError as e:
                 self.console.print(f"[red]HTTP 错误: {e.response.status_code}[/red]")
                 break
             except Exception as e:
-                self.console.print("[red]发生未知错误[/red]")
+                self.console.print(f"[red]发生未知错误: {str(e)}[/red]")
                 logging.error(f"Unexpected error: {str(e)}")
                 break
 
@@ -364,7 +362,7 @@ class OllamaShell:
         table = Table(title="✨ 命令列表", show_header=True, header_style="bold magenta")
         table.add_column("📝 命令", style="cyan")
         table.add_column("📄 说明", style="green")
-        table.add_column("�� 用法", style="yellow", justify="left")
+        table.add_column("用法", style="yellow", justify="left")
 
         commands_help = [
             ("list", "📃 列出所有可用的模型", "list"),
